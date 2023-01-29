@@ -22,7 +22,11 @@
 		"PolicyThreshold": 80
 	}
   ],
-  "envParams": {},
+  "envParams": {
+    "MYSQL_ADDRESS":"sh-cynosdbmysql-grp-05fskf3o.sql.tencentcdb.com:21330",
+    "MYSQL_PASSWORD":"ucRq3zCj",
+    "MYSQL_USERNAME":"root"
+  },
   "customLogs": "stdout",
   "initialDelaySeconds": 2,
   "dataBaseName": "aspnet_demo",
