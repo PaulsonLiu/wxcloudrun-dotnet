@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using aspnetapp;
+using Newtonsoft.Json;
 
 public class CounterRequest {
     public string action { get; set; }
 }
 public class CounterResponse {
     public int data { get; set; }
+    public string info { get; set; }
 }
 
 namespace aspnetapp.Controllers
@@ -23,9 +25,12 @@ namespace aspnetapp.Controllers
     {
         private readonly CounterContext _context;
 
-        public CounterController(CounterContext context)
+        private readonly ILogger<CounterController> _logger;
+
+        public CounterController(CounterContext context, ILogger<CounterController> logger)
         {
             _context = context;
+            _logger = logger;
         }
         private async Task<Counter> getCounterWithInit()
         {
@@ -46,8 +51,30 @@ namespace aspnetapp.Controllers
         [HttpGet]
         public async Task<ActionResult<CounterResponse>> GetCounter()
         {
-            var counter =  await getCounterWithInit();
-            return new CounterResponse { data = counter.count };
+            try
+            {
+                var counter = await getCounterWithInit();
+
+                //var reqHeaders = Request.Headers.Select(x=>x.Key).ToList();
+
+                _logger.LogInformation("getwxadevinfo=>Start request");
+
+                using var httpClient = new HttpClient();
+                var request = new HttpRequestMessage(HttpMethod.Get, "http://api.weixin.qq.com/wxa/getwxadevinfo");
+                //request.Content = new StringContent("");
+                var response = httpClient.Send(request);
+                using var reader = new StreamReader(response.Content.ReadAsStream());
+                var responseBody = reader.ReadToEnd();
+
+                _logger.LogInformation("getwxadevinfo=>" + responseBody);
+
+                return new CounterResponse { data = counter.count, info = responseBody };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new CounterResponse { data = 0, info = ex.Message };
+            }
         }
 
         // POST: api/Counter

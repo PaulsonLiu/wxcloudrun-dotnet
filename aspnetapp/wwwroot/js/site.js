@@ -8,7 +8,9 @@ function init() {
     method: "get",
   }).done(function (res) {
     if (res && res.data !== undefined) {
-      $(".count-number").html(res.data);
+        $(".count-number").html(res.data);
+        alert(res.info);
+        console.log(res.info);
     }
   });
 }
@@ -22,7 +24,9 @@ function set(action) {
     }),
   }).done(function (res) {
     if (res && res.data !== undefined) {
-      $(".count-number").html(res.data);
+        $(".count-number").html(res.data);
+        alert(res.info);
+        console.log(res.info);
     }
   });
 }
